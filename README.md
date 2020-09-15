@@ -12,7 +12,7 @@ At first the network is naive, it doesn't know the function mapping the inputs t
 
 To find these parameters, we need to know how poorly the network is predicting the real outputs. For this we calculate a loss function (also called the cost), a measure of our prediction error. For example, the mean squared loss is often used in regression and binary classification problems
 
-![alt text](https://github.com/Yogesh-S/Predict-handwritten-digits-using-Pytorch/blob/master/assets/loss_formula.jpg?raw=true)
+![](https://github.com/Yogesh-S/Predict-handwritten-digits-using-Pytorch/blob/master/assets/loss_formula.JPG?raw=true)
 where  𝑛  is the number of training examples,  𝑦𝑖  are the true labels, and  𝑦̂𝑖  are the predicted labels.
 
 By minimizing this loss with respect to the network parameters, we can find configurations where the loss is at a minimum and the network is able to predict the correct labels with high accuracy. We find this minimum using a process called gradient descent. The gradient is the slope of the loss function and points in the direction of fastest change. To get to the minimum in the least amount of time, we then want to follow the gradient (downwards). You can think of this like descending a mountain by following the steepest slope to the base.
