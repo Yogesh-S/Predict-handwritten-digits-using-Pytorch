@@ -24,4 +24,37 @@ For single layer networks, gradient descent is straightforward to implement. How
 
 Training multilayer networks is done through backpropagation which is really just an application of the chain rule from calculus. It's easiest to understand if we convert a two layer network into a graph representation.
 
+![alt text](https://github.com/Yogesh-S/Predict-handwritten-digits-using-Pytorch/blob/master/assets/backprop_diagram.png?raw=true)
+In the forward pass through the network, our data and operations go from bottom to top here. We pass the input  𝑥  through a linear transformation  𝐿1  with weights  𝑊1  and biases  𝑏1 . The output then goes through the sigmoid operation  𝑆  and another linear transformation  𝐿2 . Finally we calculate the loss  ℓ . We use the loss as a measure of how bad the network's predictions are. The goal then is to adjust the weights and biases to minimize the loss.
+
+To train the weights with gradient descent, we propagate the gradient of the loss backwards through the network. Each operation has some gradient between the inputs and outputs. As we send the gradients backwards, we multiply the incoming gradient with the gradient for the operation. Mathematically, this is really just calculating the gradient of the loss with respect to the weights using the chain rule.
+![alt text](https://github.com/Yogesh-S/Predict-handwritten-digits-using-Pytorch/blob/master/assets/chain_rule.JPG?raw=true)
+
+Note: I'm glossing over a few details here that require some knowledge of vector calculus, but they aren't necessary to understand what's going on.
+
+We update our weights using this gradient with some learning rate  𝛼 .
+
+![alt text](https://github.com/Yogesh-S/Predict-handwritten-digits-using-Pytorch/blob/master/assets/weights_update.JPG?raw=true)
+
+The learning rate  𝛼  is set such that the weight update steps are small enough that the iterative method settles in a minimum.
+
+# Losses in PyTorch
+Let's start by seeing how we calculate the loss with PyTorch. Through the nn module, PyTorch provides losses such as the cross-entropy loss (nn.CrossEntropyLoss). You'll usually see the loss assigned to criterion. As noted in the last part, with a classification problem such as MNIST, we're using the softmax function to predict class probabilities. With a softmax output, you want to use cross-entropy as the loss. To actually calculate the loss, you first define the criterion then pass in the output of your network and the correct labels.
+
+Something really important to note here. Looking at the documentation for nn.CrossEntropyLoss,
+
+This criterion combines nn.LogSoftmax() and nn.NLLLoss() in one single class.
+
+The input is expected to contain scores for each class.
+
+This means we need to pass in the raw output of our network into the loss, not the output of the softmax function. This raw output is usually called the logits or scores. We use the logits because softmax gives you probabilities which will often be very close to zero or one but floating-point numbers can't accurately represent values near zero or one. It's usually best to avoid doing calculations with probabilities, typically we use log-probabilities.
+
+It's more convenient to build the model with a log-softmax output using nn.LogSoftmax or F.log_softmax. Then you can get the actual probabilities by taking the exponential torch.exp(output). With a log-softmax output, you want to use the negative log likelihood loss, nn.NLLLoss.
+
+# Neural Network Structure
+![alt text](https://github.com/Yogesh-S/Predict-handwritten-digits-using-Pytorch/blob/master/assets/mlp_mnist.png?raw=true)
+
+Network with 784 input units, a hidden layer1 with 128 units and a ReLU activation, then a hidden layer2 with 64 units and a ReLU activation, and finally an output layer with 10 units and a softmax activation as shown above.
+
 # Predict-handwritten-digits-using-Pytorch
+Our goal is to build a neural network that can take one of these images and predict the digit in the image.
